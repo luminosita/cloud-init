@@ -43,7 +43,22 @@ do
 	host_id=`expr $start_id + $i`
 	host_name="$prefix-$i"
 
-	echo "Creating VM image: $host_name with Host Id: $host_id"
+	echo ""
+	echo ""
+	echo "Processing '$target' target for VM image: $host_name with Host Id: $host_id"
+	echo ""
+	echo ""
 	INSTANCE_NAME=$host_name INSTANCE_HOST_ID=$host_id make $target
+
+	if [ $? -eq 0 ]; then
+		echo ""
+		echo ""
+		echo "VM image: $host_name with Host Id: $host_id successfully processed"
+		echo ""
+		echo ""
+	else
+		echo "VM image: $host_name with Host Id: $host_id failed to process"
+	fi
+	
 	i=`expr $i + 1`
 done
