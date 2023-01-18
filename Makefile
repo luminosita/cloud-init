@@ -7,6 +7,8 @@ BOOT_IMAGE ?= ubuntu-22.10-server-cloudimg-amd64-disk-kvm.qcow2
 INSTANCE_PATH=$(KVM_IMAGES_PATH)/$(INSTANCE_NAME)
 BOOT_PATH=$(KVM_BASE_IMAGES_PATH)/$(BOOT_IMAGE)
 
+INSTANCE_HOST_ID ?= 50
+
 export KVM_INSTANCE_ID=$(shell uuidgen || echo i-abcdefg)
 
 define _metadata_script
