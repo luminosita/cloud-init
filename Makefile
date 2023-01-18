@@ -9,10 +9,12 @@ BOOT_PATH=$(KVM_BASE_IMAGES_PATH)/$(BOOT_IMAGE)
 
 INSTANCE_HOST_ID ?= 50
 
+export HOST_ID=$(INSTANCE_HOST_ID)
+
 export KVM_INSTANCE_ID=$(shell uuidgen || echo i-abcdefg)
 
 define _metadata_script
-cat > meta-data.yaml <<EOF
+cat > $INSTANCE_NAME/meta-data.yaml <<EOF
 instance-id: $KVM_INSTANCE_ID
 local-hostname: $INSTANCE_NAME
 EOF
@@ -20,17 +22,17 @@ endef
 export metadata_script = $(value _metadata_script)
 
 define _network_script
-cat > network-config-v2.yaml <<EOF
+cat > $INSTANCE_NAME/network-config-v2.yaml <<EOF
 network:
   version: 2
   ethernets:
-	enp1s0:
-	  addresses: [10.10.50.$INSTANCE_HOST_ID/24]
-	  nameservers:
-		addresses: [10.10.50.1,8.8.8.8]
-	  routes:
-		- to: default
-		  via: 10.10.50.1
+    enp1s0:
+      addresses: [10.10.50.$HOST_ID/24]
+      nameservers:
+        addresses: [10.10.50.1,8.8.8.8]
+      routes:
+        - to: default
+          via: 10.10.50.1
 EOF
 endef
 export network_script = $(value _network_script)
@@ -43,21 +45,17 @@ ifndef INSTANCE_HOST_ID
 	$(error INSTANCE_HOST_ID is undefined)
 endif
 
-config-metadata: check-env
-	@eval "$$metadata_script"
-
-config-network: check-env
-	@eval "$$network_script"
-
-config-files: config-metadata config-network
+config-files: 	
+	@mkdir -p $(INSTANCE_NAME); \
+	eval "$$metadata_script"; \
+	eval "$$network_script"; \
 
 # generates meta data
 seed-image: config-files
-	mkdir -p bin; \
-	echo "instance-id: $(KVM_INSTANCE_ID)" > meta-data.yaml; \
-	echo "local-hostname: $(INSTANCE_NAME)" >> meta-data.yaml
-	cloud-localds -v --network-config=network-config-v2.yaml bin/seed.img user-data.yaml meta-data.yaml
-	sudo cp bin/seed.img $(INSTANCE_PATH)/seed.img
+	mkdir -p $(INSTANCE_NAME)/bin; \
+	sudo mkdir -p $(INSTANCE_PATH); \
+	cloud-localds -v --network-config=$(INSTANCE_NAME)/network-config-v2.yaml $(INSTANCE_NAME)/bin/seed.img user-data.yaml $(INSTANCE_NAME)/meta-data.yaml
+	sudo cp $(INSTANCE_NAME)/bin/seed.img $(INSTANCE_PATH)/seed.img
 
 boot-image: seed-image
 	sudo /usr/bin/qemu-img convert -f qcow2 -O qcow2 $(BOOT_PATH) $(INSTANCE_PATH)/boot.qcow2; \
