@@ -2,9 +2,9 @@ network:
   version: 2
   ethernets:
     enp1s0:
-      addresses: [192.168.122.65/24]
+      addresses: [10.10.50.31/24]
       nameservers:
-        addresses: [192.168.122.1,8.8.8.8]
+        addresses: [10.10.50.1,8.8.8.8]
       routes:
         - to: default
-          via: 192.168.122.1
+          via: 10.10.50.1
