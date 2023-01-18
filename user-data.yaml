@@ -1,4 +1,9 @@
 #cloud-config
-password: passw0rd
-chpasswd: { expire: False }
-ssh_pwauth: True
+users:
+  - default
+  - name: reta
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    lock_passwd: false
+    ssh_authorized_keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCTaVjaFIE3Y705Aeco+EPWPJ9N6J9GN+rmGJq5ET8XovlhRDZJv2hYKuVFoqyt6vxvehsbSq6YNRzUk39y3+KosZiZvhT8s0LoI+e0gKivAdFCFfORMIhCQRNl7KXOif/qQ3tMY3ODGAVS3zKiYxidz1+9ierTFVcUgj6Xa7gCHqOAuTrOTn8wkGt0v9fsti9ELnn5Vq7gbKcN1nfvEr/Z/DSfQpIjriDV2u2+ELqP8825UN81Q4+Ri80G4A1jo+R/aj1nWyqq98Mk9aic9C0pKU859awId4NlvyqjgxSIXziU7hKstBxNf6jAUjWIWvsmFvPb4egDQAO8aaIzcYO2HQ+rezXL6bt7aZOxMNOU+1kUlCEdDOyolnWm2gwGb3dQnd5fSKdl84nWtFhRSvNVVMZ5tb5S5WqeROeS0Z+eU41n9Wto45NI/rXV9ocexeNHIQ4608N/xRO+NtPHSNoaui58sUqG5tuaQzYMmIhFnSgb2YpbVPwWx/0aKNiwmas= ubuntu@kvm
+    passwd: $6$x.hDQxPQWVMHgsFB$wpegXFE39Z6D99tti9UYrGmUJMQTvHerW4d3RzfY7/VI0LESi5ZOGaIlX/VVJV5tJCqhqcs7ijMGM9WYUHR9g0
