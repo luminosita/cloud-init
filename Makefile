@@ -1,8 +1,5 @@
-export PATH := /usr/bin:${PATH}
-
 KVM_BASE_IMAGES_PATH=/var/lib/libvirt/images/base
 KVM_IMAGES_PATH=/var/lib/libvirt/images
-KVM_INSTANCE_ID=$(shell uuidgen || echo i-abcdefg)
 KVM_INSTANCE_BOOT_SIZE=10G
 
 BOOT_IMAGE ?= ubuntu-22.10-server-cloudimg-amd64-disk-kvm.qcow2
@@ -10,13 +7,50 @@ BOOT_IMAGE ?= ubuntu-22.10-server-cloudimg-amd64-disk-kvm.qcow2
 INSTANCE_PATH=$(KVM_IMAGES_PATH)/$(INSTANCE_NAME)
 BOOT_PATH=$(KVM_BASE_IMAGES_PATH)/$(BOOT_IMAGE)
 
+export KVM_INSTANCE_ID=$(shell uuidgen || echo i-abcdefg)
+
+define _metadata_script
+cat > meta-data.yaml <<EOF
+instance-id: $KVM_INSTANCE_ID
+local-hostname: $INSTANCE_NAME
+EOF
+endef
+export metadata_script = $(value _metadata_script)
+
+define _network_script
+cat > network-config-v2.yaml <<EOF
+network:
+  version: 2
+  ethernets:
+	enp1s0:
+	  addresses: [10.10.50.$INSTANCE_HOST_ID/24]
+	  nameservers:
+		addresses: [10.10.50.1,8.8.8.8]
+	  routes:
+		- to: default
+		  via: 10.10.50.1
+EOF
+endef
+export network_script = $(value _network_script)
+
 check-env:
 ifndef INSTANCE_NAME
 	$(error INSTANCE_NAME is undefined)
 endif
+ifndef INSTANCE_HOST_ID
+	$(error INSTANCE_HOST_ID is undefined)
+endif
+
+config-metadata: check-env
+	@eval "$$metadata_script"
+
+config-network: check-env
+	@eval "$$network_script"
+
+config-files: config-metadata config-network
 
 # generates meta data
-seed-image: check-env
+seed-image: config-files
 	mkdir -p bin; \
 	echo "instance-id: $(KVM_INSTANCE_ID)" > meta-data.yaml; \
 	echo "local-hostname: $(INSTANCE_NAME)" >> meta-data.yaml
