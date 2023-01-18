@@ -2,10 +2,10 @@ KVM_BASE_IMAGES_PATH=/var/lib/libvirt/images/base
 KVM_IMAGES_PATH=/var/lib/libvirt/images
 KVM_INSTANCE_BOOT_SIZE=10G
 
-BOOT_IMAGE ?= ubuntu-22.10-server-cloudimg-amd64-disk-kvm.qcow2
+BASE_IMAGE ?= ubuntu-22.10-server-cloudimg-amd64-disk-kvm.qcow2
 
 INSTANCE_PATH=$(KVM_IMAGES_PATH)/$(INSTANCE_NAME)
-BOOT_PATH=$(KVM_BASE_IMAGES_PATH)/$(BOOT_IMAGE)
+BASE_PATH=$(KVM_BASE_IMAGES_PATH)/$(BASE_IMAGE)
 
 INSTANCE_HOST_ID ?= 50
 
@@ -45,6 +45,12 @@ ifndef INSTANCE_HOST_ID
 	$(error INSTANCE_HOST_ID is undefined)
 endif
 
+check-base-image:
+ifeq (,$(wildcard $(BASE_PATH)))
+	$(error Base image does not exist: $(BASE_PATH))
+endif
+	@echo "Base image exists: $(BASE_PATH)"
+
 config-files: 	
 	@mkdir -p $(INSTANCE_NAME); \
 	eval "$$metadata_script"; \
@@ -57,8 +63,8 @@ seed-image: config-files
 	cloud-localds -v --network-config=$(INSTANCE_NAME)/network-config-v2.yaml $(INSTANCE_NAME)/bin/seed.img user-data.yaml $(INSTANCE_NAME)/meta-data.yaml
 	sudo cp $(INSTANCE_NAME)/bin/seed.img $(INSTANCE_PATH)/seed.img
 
-boot-image: seed-image
-	sudo /usr/bin/qemu-img convert -f qcow2 -O qcow2 $(BOOT_PATH) $(INSTANCE_PATH)/boot.qcow2; \
+boot-image: check-base-image seed-image
+	sudo /usr/bin/qemu-img convert -f qcow2 -O qcow2 $(BASE_PATH) $(INSTANCE_PATH)/boot.qcow2; \
 	sudo /usr/bin/qemu-img resize $(INSTANCE_PATH)/boot.qcow2 $(KVM_INSTANCE_BOOT_SIZE)
 
 # create virtual machine with cloud-init seed image
@@ -93,7 +99,8 @@ delete: check-env stop
 	virsh destroy $(INSTANCE_NAME); \
 	virsh undefine $(INSTANCE_NAME); \
 	virsh pool-destroy $(INSTANCE_NAME); \
-	virsh pool-undefine $(INSTANCE_NAME)
+	virsh pool-undefine $(INSTANCE_NAME); \
+	sudo rm -rf $(INSTANCE_PATH)
 
 # show help
 help:
