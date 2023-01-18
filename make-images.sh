@@ -40,7 +40,10 @@ i=1
 
 while [ $i -le $count ]
 do
-	id=`expr $start_id + $i`
-	INSTANCE_NAME=$prefix-$i INSTANCE_HOST_ID=$id make $target
+	host_id=`expr $start_id + $i`
+	host_name="$prefix-$i"
+
+	echo "Creating VM image: $host_name with Host Id: $host_id"
+	INSTANCE_NAME=$host_name INSTANCE_HOST_ID=$host_id make $target
 	i=`expr $i + 1`
 done
