@@ -16,7 +16,7 @@ export NET_PREFIX=$(NETWORK_PREFIX)
 export KVM_INSTANCE_ID=$(shell uuidgen || echo i-abcdefg)
 
 define _metadata_script
-cat > $INSTANCE_NAME/meta-data.yaml <<EOF
+cat > $INSTANCE_NAME/meta-data <<EOF
 instance-id: $KVM_INSTANCE_ID
 local-hostname: $INSTANCE_NAME
 EOF
@@ -24,7 +24,7 @@ endef
 export metadata_script = $(value _metadata_script)
 
 define _network_script
-cat > $INSTANCE_NAME/network-config-v2.yaml <<EOF
+cat > $INSTANCE_NAME/network-config <<EOF
 network:
   version: 2
   ethernets:
@@ -57,12 +57,13 @@ config-files:
 	@mkdir -p $(INSTANCE_NAME); \
 	eval "$$metadata_script"; \
 	eval "$$network_script"; \
+	cp user-data.yaml $(INSTANCE_NAME)
 
 # generates meta data
 seed-image: config-files
 	mkdir -p $(INSTANCE_NAME)/bin; \
 	sudo mkdir -p $(INSTANCE_PATH); \
-	mkisofs -v -output "$(INSTANCE_NAME)/bin/seed.img" -volid cidata -joliet -rock $(INSTANCE_NAME)/meta-data.yaml $(INSTANCE_NAME)/network-config-v2.yaml user-data.yaml
+	mkisofs -v -output "$(INSTANCE_NAME)/bin/seed.img" -volid cidata -joliet -rock $(INSTANCE_NAME)/meta-data $(INSTANCE_NAME)/network-config $(INSTANCE_NAME)/user-data
 	sudo cp $(INSTANCE_NAME)/bin/seed.img $(INSTANCE_PATH)/seed.img
 
 boot-image: check-base-image seed-image
