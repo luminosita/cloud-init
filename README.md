@@ -52,7 +52,7 @@ $ resolvectl
 Once the network is setup, create VMs. VMs are using `default` network. 
 
 ### VM Configuration
-Copy `user-data.yaml` from `samples` folder and alter it with local cloud-init configuration options.
+Copy `user-data.yaml` from `sample` folder and alter it with local cloud-init configuration options.
 
 Create hash passwords
 ```bash
@@ -115,6 +115,6 @@ $ NETWORK_PREFIX=192.168.64 INSTANCE_NAME=node-1 NETWORK_NIC=enp0s1 make seed-im
 ```bash
 $ export NETWORK_PREFIX=192.168.64 
 $ export NETWORK_NIC=enp0s1
-$ sh make-images.sh -c 3 -p node -s 30 -t create
+$ sh make-images.sh -c 3 -p node -s 30 -t seed-image
 ```
 Seed images are created in `node-x/bin` folder. Use seed image to mount CD-ROM drive when cloning base image in UTM
