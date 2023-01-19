@@ -118,3 +118,5 @@ $ export NETWORK_NIC=enp0s1
 $ sh make-images.sh -c 3 -p node -s 30 -t seed-image
 ```
 Seed images are created in `node-x/bin` folder. Use seed image to mount CD-ROM drive when cloning base image in UTM
+
+**_!!! Change MAC address for each cloned VM !!!_**
