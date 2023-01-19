@@ -57,7 +57,7 @@ config-files:
 	@mkdir -p $(INSTANCE_NAME); \
 	eval "$$metadata_script"; \
 	eval "$$network_script"; \
-	cp user-data.yaml $(INSTANCE_NAME)
+	cp user-data.yaml $(INSTANCE_NAME)/user-data
 
 # generates meta data
 seed-image: config-files
