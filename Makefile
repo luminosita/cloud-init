@@ -17,10 +17,17 @@ export NET_PREFIX=$(NETWORK_PREFIX)
 export NET_NIC=$(NETWORK_NIC)
 export KVM_INSTANCE_ID=$(shell uuidgen || echo i-abcdefg)
 
+define _userdata_script
+cat >> $INSTANCE_NAME/user-data <<EOF
+preserve_hostname: false
+hostname: $INSTANCE_NAME
+EOF
+endef
+export userdata_script = $(value _userdata_script)
+
 define _metadata_script
 cat > $INSTANCE_NAME/meta-data <<EOF
 instance-id: $KVM_INSTANCE_ID
-local-hostname: $INSTANCE_NAME
 EOF
 endef
 export metadata_script = $(value _metadata_script)
@@ -57,9 +64,10 @@ endif
 
 config-files: 	
 	@mkdir -p $(INSTANCE_NAME); \
+	cp user-data.yaml $(INSTANCE_NAME)/user-data
+	eval "$$userdata_script"; \
 	eval "$$metadata_script"; \
 	eval "$$network_script"; \
-	cp user-data.yaml $(INSTANCE_NAME)/user-data
 
 # generates meta data
 seed-image: config-files
