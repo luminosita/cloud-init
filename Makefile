@@ -67,8 +67,8 @@ seed-image: config-files
 	sudo cp $(INSTANCE_NAME)/bin/seed.img $(INSTANCE_PATH)/seed.img
 
 boot-image: check-base-image seed-image
-	sudo /usr/bin/qemu-img convert -f qcow2 -O qcow2 $(BASE_PATH) $(INSTANCE_PATH)/boot.qcow2; \
-	sudo /usr/bin/qemu-img resize $(INSTANCE_PATH)/boot.qcow2 $(KVM_INSTANCE_BOOT_SIZE)
+	sudo qemu-img convert -f qcow2 -O qcow2 $(BASE_PATH) $(INSTANCE_PATH)/boot.qcow2; \
+	sudo qemu-img resize $(INSTANCE_PATH)/boot.qcow2 $(KVM_INSTANCE_BOOT_SIZE)
 
 # create virtual machine with cloud-init seed image
 create: boot-image
