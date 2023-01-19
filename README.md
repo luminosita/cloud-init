@@ -52,7 +52,7 @@ $ resolvectl
 Once the network is setup, create VMs. VMs are using `default` network. 
 
 ### VM Configuration
-Edit user-data.yaml file for cloud-init configuration options.
+Copy `user-data.yaml` from `samples` folder and alter it with local cloud-init configuration options.
 
 Create hash passwords
 ```bash
