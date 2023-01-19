@@ -107,14 +107,17 @@ $ sh make-images.sh -c 3 -p node -s 30 -t create
 #### OSX
 Script cannot create VMs directly on Mac. Use base image in UTM to clone new VMs. Attach seed image as CD-ROM drive to customize each VM.
 
+Export OSX environment variables
+```bash
+$ sh env-osx.sh
+```
+
 Generate VM seed images. Use `192.168.64`as network prefix. Specify correct NIC. 
 ```bash
-$ NETWORK_PREFIX=192.168.64 INSTANCE_NAME=node-1 NETWORK_NIC=enp0s1 make seed-image
+$ INSTANCE_NAME=node-1 make seed-image
 ```
 , or
 ```bash
-$ export NETWORK_PREFIX=192.168.64 
-$ export NETWORK_NIC=enp0s1
 $ sh make-images.sh -c 3 -p node -s 30 -t seed-image
 ```
 Seed images are created in `node-x/bin` folder. Use seed image to mount CD-ROM drive when cloning base image in UTM
