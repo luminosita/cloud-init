@@ -9,8 +9,10 @@ BASE_PATH=$(KVM_BASE_IMAGES_PATH)/$(BASE_IMAGE)
 
 INSTANCE_HOST_ID ?= 50
 
-export HOST_ID=$(INSTANCE_HOST_ID)
+NETWORK_PREFIX ?= 10.10.50
 
+export HOST_ID=$(INSTANCE_HOST_ID)
+export NET_PREFIX=$(NETWORK_PREFIX)
 export KVM_INSTANCE_ID=$(shell uuidgen || echo i-abcdefg)
 
 define _metadata_script
@@ -27,12 +29,12 @@ network:
   version: 2
   ethernets:
     enp1s0:
-      addresses: [10.10.50.$HOST_ID/24]
+      addresses: [$NET_PREFIX.$HOST_ID/24]
       nameservers:
-        addresses: [10.10.50.1,8.8.8.8]
+        addresses: [$NET_PREFIX.1,8.8.8.8]
       routes:
         - to: default
-          via: 10.10.50.1
+          via: $NET_PREFIX.1
 EOF
 endef
 export network_script = $(value _network_script)
@@ -60,7 +62,7 @@ config-files:
 seed-image: config-files
 	mkdir -p $(INSTANCE_NAME)/bin; \
 	sudo mkdir -p $(INSTANCE_PATH); \
-	cloud-localds -v --network-config=$(INSTANCE_NAME)/network-config-v2.yaml $(INSTANCE_NAME)/bin/seed.img user-data.yaml $(INSTANCE_NAME)/meta-data.yaml
+	mkisofs -v -output "$(INSTANCE_NAME)/bin/seed.img" -volid cidata -joliet -rock $(INSTANCE_NAME)/meta-data.yaml $(INSTANCE_NAME)/network-config-v2.yaml user-data.yaml
 	sudo cp $(INSTANCE_NAME)/bin/seed.img $(INSTANCE_PATH)/seed.img
 
 boot-image: check-base-image seed-image
