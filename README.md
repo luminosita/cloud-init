@@ -1,3 +1,4 @@
+### General virt-manager CLI commands
 List available VMs
 ```bash
 $ virsh list --all
@@ -7,7 +8,7 @@ List available networks
 ```bash
 $ virsh net-list --all
 ```
-Edit network configuration
+### Network configuration
 ```bash
 $ virsh net-edit default
 ```
@@ -48,7 +49,18 @@ $ sudo ln -s /run/systemd/resolve/resolv.conf /etc/resolv.conf
 $ systemctl restart systemd-resolved
 $ resolvectl
 ```
-Once the network is setup, create VMs. VMs are using `default` network. Start script to see all options
+Once the network is setup, create VMs. VMs are using `default` network. 
+
+### VM Configuration
+Edit user-data.yaml file for cloud-init configuration options.
+
+Create hash passwords
+```bash
+$ mkpasswd -m sha-512
+```
+_**Read OSX section for specific setup on Mac**_
+
+Start script to see all options
 ```bash
 $ sh make-images.sh
 ```
@@ -91,3 +103,18 @@ Download new base image to `/var/lib/libvirt/images/base`. Use new base image na
 $ export BASE_IMAGE=jammy-server-cloudimg-amd64-disk-kvm.img
 $ sh make-images.sh -c 3 -p node -s 30 -t create
 ```
+
+#### OSX
+Script cannot create VMs directly on Mac. Use base image in UTM to clone new VMs. Attach seed image as CD-ROM drive to customize each VM.
+
+Generate VM seed images. Use `192.168.64`as network prefix. Specify correct NIC. 
+```bash
+$ NETWORK_PREFIX=192.168.64 INSTANCE_NAME=node-1 NETWORK_NIC=enp0s1 make seed-image
+```
+, or
+```bash
+$ export NETWORK_PREFIX=192.168.64 
+$ export NETWORK_NIC=enp0s1
+$ sh make-images.sh -c 3 -p node -s 30 -t create
+```
+Seed images are created in `node-x/bin` folder. Use seed image to mount CD-ROM drive when cloning base image in UTM

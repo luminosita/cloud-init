@@ -1,0 +1,23 @@
+<network>
+    <name>default</name>
+    <uuid>d357b602-9c52-472d-9890-dd91c480d15d</uuid>
+    <forward mode='nat'/>
+    <bridge name='virbr0' stp='on' delay='0'/>
+    <mac address='48:65:ee:11:93:8e'/>
+    <dns>
+        <host ip='10.10.50.31'>
+            <hostname>kube1.home.lab</hostname>
+        </host>
+        <host ip='10.10.50.32'>
+            <hostname>kube2.home.lab</hostname>
+        </host>
+        <host ip='10.10.50.33'>
+            <hostname>kube3.home.lab</hostname>
+        </host>
+    </dns>
+    <ip address='10.10.50.1' netmask='255.255.255.0'>
+        <dhcp>
+            <range start='10.10.50.100' end='10.10.50.200'/>
+        </dhcp>
+    </ip>
+</network>

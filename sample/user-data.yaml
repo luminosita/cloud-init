@@ -1,0 +1,26 @@
+#cloud-config
+users:
+  - default
+  - name: reta
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    lock_passwd: false
+    shell: /bin/bash    
+    ssh_authorized_keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC5wjWVwyJKr+7Ec+hF//GXhnCHmugnVVF0vVs8uXUVtEjmUnxI2F3Vn1DRSofU8uij/O/xuGgP8rMxK45Y2cZprPSXVJi42Dg/g5BMVOwo2AWoOnG8c8O6mtMjr0SStn53pMTKEDr5GSkYSKEMo6qW7XbmW/sbHxrk37YOnEXBRVgthc9gWpLJ7yHlgXYhlSkCy9xXcNmlePfRBVIq2ek/XbW8sAF7iCRfJXLbWMeQBGXNpXhmt8b2kJhSb7G3UDxgt0eK+l2HLWEUtZSn/qIy6A3tYh1G/jwXHcXwTi62ZIUWJ/9QNI8LzN5gsKX1gFoWYzizwBbvWiU6w7FArJgmkMt3BJ8IppsHm3sFoc8WIczd0Ep89ZQXvJlTVjnlaCifa0fOr6HohJ5XMVGfD2UlL30cv5R1gHC3DqfTHNkK9IHzFIBue/XkNBeATM0IOzhxY1jUOoQxru9PVHeZCv+s1QQjLRKUyLbwvqIs3Q8e7VOpm6+pPMqzUYvEdNWfu80= milos@Milos-MacBook-Pro.local
+    passwd: $6$x.hDQxPQWVMHgsFB$wpegXFE39Z6D99tti9UYrGmUJMQTvHerW4d3RzfY7/VI0LESi5ZOGaIlX/VVJV5tJCqhqcs7ijMGM9WYUHR9g0
+
+system_info:
+  default_user:
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    lock_passwd: false
+    shell: /bin/bash    
+    ssh_authorized_keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC5wjWVwyJKr+7Ec+hF//GXhnCHmugnVVF0vVs8uXUVtEjmUnxI2F3Vn1DRSofU8uij/O/xuGgP8rMxK45Y2cZprPSXVJi42Dg/g5BMVOwo2AWoOnG8c8O6mtMjr0SStn53pMTKEDr5GSkYSKEMo6qW7XbmW/sbHxrk37YOnEXBRVgthc9gWpLJ7yHlgXYhlSkCy9xXcNmlePfRBVIq2ek/XbW8sAF7iCRfJXLbWMeQBGXNpXhmt8b2kJhSb7G3UDxgt0eK+l2HLWEUtZSn/qIy6A3tYh1G/jwXHcXwTi62ZIUWJ/9QNI8LzN5gsKX1gFoWYzizwBbvWiU6w7FArJgmkMt3BJ8IppsHm3sFoc8WIczd0Ep89ZQXvJlTVjnlaCifa0fOr6HohJ5XMVGfD2UlL30cv5R1gHC3DqfTHNkK9IHzFIBue/XkNBeATM0IOzhxY1jUOoQxru9PVHeZCv+s1QQjLRKUyLbwvqIs3Q8e7VOpm6+pPMqzUYvEdNWfu80= milos@Milos-MacBook-Pro.local
+    passwd: $6$2lMX.eWrDX9nOXEy$BWn8BrLc2jE2X4MEnlsuEwJSlilqZQUvawcrLf7g5zuBLXnr2YoZRzinVkFXq5LDboKtAwN6BeqXtLADOrMhb.
+
+write_files:
+- content: !!binary |
+  
+  owner: root:root
+  path: /etc/cloud/cloud-init.disabled
+  permissions: '0644'
